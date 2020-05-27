@@ -1,0 +1,159 @@
+# 模块01-02
+
+1. 描述引用计数的工作原理和优缺点
+
+    设置引用数，判断当前引用数是否为0，当某一个对象引用关系发生改变的时候，引用计数器就会改变该对象的引用值, 当为0的时候GC就会将内存回收，
+
+    优点： 
+
+      1. 发现垃圾立即回收
+
+      2. 最大限度减少程序暂停
+
+    缺点：
+
+      1. 无法回收循环引用对象
+
+      2. 时间开销大， 当前的引用计数需要维持一个数值的变化，需要时刻监听数值是否发生了变化
+
+
+2. 描述标记整理算法的工作流程
+
+    1. 循环所有对象标记活动对象
+
+    2. 遍历所有对象， 整理活动空间，移动对象位置，产生连续空间，清除没有标记的对象，抹去有标记的对象标记
+
+    3. 回收相应空间， 放置在空闲列表
+
+
+3. 描述V8的新生代存储区垃圾回收的流程
+
+    1. 将新生代一分为二 使用空间为From 和 空闲to空间
+
+    2. 标记整理将活动对象拷贝至to空间
+
+    3. from和to空间交换实现内存释放
+
+
+4. 描述增量标记算法在何时使用以及工作原理
+
+    1. V8老年代垃圾回收用到了增量标记算法。将一整段垃圾回收分为几个部分，组合完成回收，
+    实现垃圾回收和程序运行交替执行；
+
+    2. 标记操作完成之后进行垃圾回收操作；
+
+
+### 代码题  
+
+>  code中也有
+
+```
+const fp = require('lodash/fp');
+
+// 代码题1
+const cars = [{
+  name: '1',
+  horsepower: 1,
+  dollar_value: 1,
+  in_stock: true,
+}, {
+  name: '2',
+  horsepower: 2,
+  dollar_value: 2,
+  in_stock: false,
+}]
+
+
+// 代码1-1
+const isLastInStock = fp.flowRight(fp.prop('in_stock') ,fp.last);
+
+console.log(isLastInStock(cars));
+
+// 代码1-2
+const isFirstInStock = fp.flowRight(fp.prop('name') ,fp.first);
+
+console.log(isFirstInStock(cars));
+
+// 代码1-3
+let _average = (xs) => fp.reduce(fp.add, 0, xs) / xs.length;
+
+let averaDollarValue = function(cars) {
+  const res = fp.flowRight(_average, fp.map((car) => car.dollar_value))
+  return res(cars);
+}
+
+console.log(averaDollarValue(cars));
+
+// 代码1-4
+let _underscore = fp.replace(/\W+/g, '_')
+
+const saniyizeNames = fp.flowRight(fp.map(fp.flowRight(_underscore, fp.toLower)));
+
+console.log(saniyizeNames(['Hello World', 'SS ss']))
+
+
+// 代码题 2
+class Container {
+  static of (value) {
+    return new Container(value);
+  }
+
+  constructor(value) {
+    this._value = value;
+  }
+
+  map (fn) {
+    return Container.of(fn(this._value));
+  }
+}
+
+class Maybe {
+  static of (x) {
+    return new Maybe(x);
+  }
+
+  constructor(value) {
+    this._value = value;
+  }
+
+  map (fn) {
+    return this.isNothing() ? this : Container.of(fn(this._value));
+  }
+
+  isNothing() {
+    return this._value === null || this._value === undefined;
+  }
+}
+
+// 代码2-1
+let maybe = Maybe.of([5, 6, 1]);
+
+let exl = (y) => maybe.map(fp.map(fp.add(y)));
+
+console.log(exl(2), 'exl')
+
+// 代码2-2
+let xs = Container.of(['do', 'ray', 'me', 'fa', 'so']);
+
+let ex2 = xs.map(fp.first);
+
+console.log(ex2, 'ex2')
+
+// 代码2-3
+let safeProp = fp.curry((x, o) => Maybe.of(o[x]));
+
+let user = {id: 2, name: 'Albert'};
+
+let ex3 = safeProp('name')(user).map(fp.first);
+
+console.log(ex3, 'ex3');
+
+// 代码2-4 
+// let ex4 = function(n) {
+//   if (n) {return parseInt(n)};
+// }
+
+let ex4 = (n) => Maybe.of(n).map(parseInt)._value;
+console.log(ex4('1'))
+
+```
