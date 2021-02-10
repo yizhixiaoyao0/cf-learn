@@ -1,0 +1,631 @@
+/* Copyright 2018 The Chromium Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file. */
+
+ #logo {
+  margin-top: var(--logo-margin-top);
+  min-height: calc(var(--logo-height) + var(--logo-margin-bottom));
+  position: relative;
+}
+
+.non-google-page #logo {
+  display: none;
+}
+
+#logo-doodle {
+  text-align: center;
+}
+
+#logo-default,
+#logo-doodle {
+  opacity: 0;
+  visibility: hidden;
+}
+
+#logo-default.show-logo,
+#logo-doodle.show-logo {
+  opacity: 1;
+  visibility: visible;
+}
+
+#logo-doodle-container,
+#logo-doodle-iframe,
+#logo-doodle-wrapper {
+  display: none;
+}
+
+#logo-doodle-button {
+  cursor: pointer;
+}
+
+#logo-doodle-iframe.show-logo {
+  display: block;
+}
+
+#logo-doodle-container.show-logo {
+  display: inline-block;
+}
+
+.show-logo #logo-doodle-wrapper {
+  display: inline-block;
+}
+
+@media (prefers-color-scheme: dark) {
+  .show-logo #logo-doodle-wrapper {
+    border-radius: 20px;
+    display: inline-block;
+    padding: 16px 24px 16px 24px;
+  }
+}
+
+#logo-doodle-image {
+  outline: none;
+}
+
+#logo-default.fade,
+#logo-doodle.fade {
+  transition: opacity 130ms, visibility 130ms;
+}
+
+#logo-default,
+#logo-non-white {
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNzIiIGhlaWdodD0iOTIiPjxwYXRoIGZpbGw9IiNFQTQzMzUiIGQ9Ik0xMTUuNzUgNDcuMThjMCAxMi43Ny05Ljk5IDIyLjE4LTIyLjI1IDIyLjE4cy0yMi4yNS05LjQxLTIyLjI1LTIyLjE4QzcxLjI1IDM0LjMyIDgxLjI0IDI1IDkzLjUgMjVzMjIuMjUgOS4zMiAyMi4yNSAyMi4xOHptLTkuNzQgMGMwLTcuOTgtNS43OS0xMy40NC0xMi41MS0xMy40NFM4MC45OSAzOS4yIDgwLjk5IDQ3LjE4YzAgNy45IDUuNzkgMTMuNDQgMTIuNTEgMTMuNDRzMTIuNTEtNS41NSAxMi41MS0xMy40NHoiLz48cGF0aCBmaWxsPSIjRkJCQzA1IiBkPSJNMTYzLjc1IDQ3LjE4YzAgMTIuNzctOS45OSAyMi4xOC0yMi4yNSAyMi4xOHMtMjIuMjUtOS40MS0yMi4yNS0yMi4xOGMwLTEyLjg1IDkuOTktMjIuMTggMjIuMjUtMjIuMThzMjIuMjUgOS4zMiAyMi4yNSAyMi4xOHptLTkuNzQgMGMwLTcuOTgtNS43OS0xMy40NC0xMi41MS0xMy40NHMtMTIuNTEgNS40Ni0xMi41MSAxMy40NGMwIDcuOSA1Ljc5IDEzLjQ0IDEyLjUxIDEzLjQ0czEyLjUxLTUuNTUgMTIuNTEtMTMuNDR6Ii8+PHBhdGggZmlsbD0iIzQyODVGNCIgZD0iTTIwOS43NSAyNi4zNHYzOS44MmMwIDE2LjM4LTkuNjYgMjMuMDctMjEuMDggMjMuMDctMTAuNzUgMC0xNy4yMi03LjE5LTE5LjY2LTEzLjA3bDguNDgtMy41M2MxLjUxIDMuNjEgNS4yMSA3Ljg3IDExLjE3IDcuODcgNy4zMSAwIDExLjg0LTQuNTEgMTEuODQtMTN2LTMuMTloLS4zNGMtMi4xOCAyLjY5LTYuMzggNS4wNC0xMS42OCA1LjA0LTExLjA5IDAtMjEuMjUtOS42Ni0yMS4yNS0yMi4wOSAwLTEyLjUyIDEwLjE2LTIyLjI2IDIxLjI1LTIyLjI2IDUuMjkgMCA5LjQ5IDIuMzUgMTEuNjggNC45NmguMzR2LTMuNjFoOS4yNXptLTguNTYgMjAuOTJjMC03LjgxLTUuMjEtMTMuNTItMTEuODQtMTMuNTItNi43MiAwLTEyLjM1IDUuNzEtMTIuMzUgMTMuNTIgMCA3LjczIDUuNjMgMTMuMzYgMTIuMzUgMTMuMzYgNi42MyAwIDExLjg0LTUuNjMgMTEuODQtMTMuMzZ6Ii8+PHBhdGggZmlsbD0iIzM0QTg1MyIgZD0iTTIyNSAzdjY1aC05LjVWM2g5LjV6Ii8+PHBhdGggZmlsbD0iI0VBNDMzNSIgZD0iTTI2Mi4wMiA1NC40OGw3LjU2IDUuMDRjLTIuNDQgMy42MS04LjMyIDkuODMtMTguNDggOS44My0xMi42IDAtMjIuMDEtOS43NC0yMi4wMS0yMi4xOCAwLTEzLjE5IDkuNDktMjIuMTggMjAuOTItMjIuMTggMTEuNTEgMCAxNy4xNCA5LjE2IDE4Ljk4IDE0LjExbDEuMDEgMi41Mi0yOS42NSAxMi4yOGMyLjI3IDQuNDUgNS44IDYuNzIgMTAuNzUgNi43MiA0Ljk2IDAgOC40LTIuNDQgMTAuOTItNi4xNHptLTIzLjI3LTcuOThsMTkuODItOC4yM2MtMS4wOS0yLjc3LTQuMzctNC43LTguMjMtNC43LTQuOTUgMC0xMS44NCA0LjM3LTExLjU5IDEyLjkzeiIvPjxwYXRoIGZpbGw9IiM0Mjg1RjQiIGQ9Ik0zNS4yOSA0MS40MVYzMkg2N2MuMzEgMS42NC40NyAzLjU4LjQ3IDUuNjggMCA3LjA2LTEuOTMgMTUuNzktOC4xNSAyMi4wMS02LjA1IDYuMy0xMy43OCA5LjY2LTI0LjAyIDkuNjZDMTYuMzIgNjkuMzUuMzYgNTMuODkuMzYgMzQuOTEuMzYgMTUuOTMgMTYuMzIuNDcgMzUuMy40N2MxMC41IDAgMTcuOTggNC4xMiAyMy42IDkuNDlsLTYuNjQgNi42NGMtNC4wMy0zLjc4LTkuNDktNi43Mi0xNi45Ny02LjcyLTEzLjg2IDAtMjQuNyAxMS4xNy0yNC43IDI1LjAzIDAgMTMuODYgMTAuODQgMjUuMDMgMjQuNyAyNS4wMyA4Ljk5IDAgMTQuMTEtMy42MSAxNy4zOS02Ljg5IDIuNjYtMi42NiA0LjQxLTYuNDYgNS4xLTExLjY1bC0yMi40OS4wMXoiLz48L3N2Zz4=);
+  background-repeat: no-repeat;
+  bottom: var(--logo-margin-bottom);
+  height: 92px;
+  left: calc(50% - 272px/2);
+  position: absolute;
+  width: 272px;
+}
+
+body.alternate-logo #logo-default,
+body.alternate-logo #logo-non-white {
+  -webkit-mask-image:
+      url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNzIiIGhlaWdodD0iOTIiPjxwYXRoIGZpbGw9IiNFQTQzMzUiIGQ9Ik0xMTUuNzUgNDcuMThjMCAxMi43Ny05Ljk5IDIyLjE4LTIyLjI1IDIyLjE4cy0yMi4yNS05LjQxLTIyLjI1LTIyLjE4QzcxLjI1IDM0LjMyIDgxLjI0IDI1IDkzLjUgMjVzMjIuMjUgOS4zMiAyMi4yNSAyMi4xOHptLTkuNzQgMGMwLTcuOTgtNS43OS0xMy40NC0xMi41MS0xMy40NFM4MC45OSAzOS4yIDgwLjk5IDQ3LjE4YzAgNy45IDUuNzkgMTMuNDQgMTIuNTEgMTMuNDRzMTIuNTEtNS41NSAxMi41MS0xMy40NHoiLz48cGF0aCBmaWxsPSIjRkJCQzA1IiBkPSJNMTYzLjc1IDQ3LjE4YzAgMTIuNzctOS45OSAyMi4xOC0yMi4yNSAyMi4xOHMtMjIuMjUtOS40MS0yMi4yNS0yMi4xOGMwLTEyLjg1IDkuOTktMjIuMTggMjIuMjUtMjIuMThzMjIuMjUgOS4zMiAyMi4yNSAyMi4xOHptLTkuNzQgMGMwLTcuOTgtNS43OS0xMy40NC0xMi41MS0xMy40NHMtMTIuNTEgNS40Ni0xMi41MSAxMy40NGMwIDcuOSA1Ljc5IDEzLjQ0IDEyLjUxIDEzLjQ0czEyLjUxLTUuNTUgMTIuNTEtMTMuNDR6Ii8+PHBhdGggZmlsbD0iIzQyODVGNCIgZD0iTTIwOS43NSAyNi4zNHYzOS44MmMwIDE2LjM4LTkuNjYgMjMuMDctMjEuMDggMjMuMDctMTAuNzUgMC0xNy4yMi03LjE5LTE5LjY2LTEzLjA3bDguNDgtMy41M2MxLjUxIDMuNjEgNS4yMSA3Ljg3IDExLjE3IDcuODcgNy4zMSAwIDExLjg0LTQuNTEgMTEuODQtMTN2LTMuMTloLS4zNGMtMi4xOCAyLjY5LTYuMzggNS4wNC0xMS42OCA1LjA0LTExLjA5IDAtMjEuMjUtOS42Ni0yMS4yNS0yMi4wOSAwLTEyLjUyIDEwLjE2LTIyLjI2IDIxLjI1LTIyLjI2IDUuMjkgMCA5LjQ5IDIuMzUgMTEuNjggNC45NmguMzR2LTMuNjFoOS4yNXptLTguNTYgMjAuOTJjMC03LjgxLTUuMjEtMTMuNTItMTEuODQtMTMuNTItNi43MiAwLTEyLjM1IDUuNzEtMTIuMzUgMTMuNTIgMCA3LjczIDUuNjMgMTMuMzYgMTIuMzUgMTMuMzYgNi42MyAwIDExLjg0LTUuNjMgMTEuODQtMTMuMzZ6Ii8+PHBhdGggZmlsbD0iIzM0QTg1MyIgZD0iTTIyNSAzdjY1aC05LjVWM2g5LjV6Ii8+PHBhdGggZmlsbD0iI0VBNDMzNSIgZD0iTTI2Mi4wMiA1NC40OGw3LjU2IDUuMDRjLTIuNDQgMy42MS04LjMyIDkuODMtMTguNDggOS44My0xMi42IDAtMjIuMDEtOS43NC0yMi4wMS0yMi4xOCAwLTEzLjE5IDkuNDktMjIuMTggMjAuOTItMjIuMTggMTEuNTEgMCAxNy4xNCA5LjE2IDE4Ljk4IDE0LjExbDEuMDEgMi41Mi0yOS42NSAxMi4yOGMyLjI3IDQuNDUgNS44IDYuNzIgMTAuNzUgNi43MiA0Ljk2IDAgOC40LTIuNDQgMTAuOTItNi4xNHptLTIzLjI3LTcuOThsMTkuODItOC4yM2MtMS4wOS0yLjc3LTQuMzctNC43LTguMjMtNC43LTQuOTUgMC0xMS44NCA0LjM3LTExLjU5IDEyLjkzeiIvPjxwYXRoIGZpbGw9IiM0Mjg1RjQiIGQ9Ik0zNS4yOSA0MS40MVYzMkg2N2MuMzEgMS42NC40NyAzLjU4LjQ3IDUuNjggMCA3LjA2LTEuOTMgMTUuNzktOC4xNSAyMi4wMS02LjA1IDYuMy0xMy43OCA5LjY2LTI0LjAyIDkuNjZDMTYuMzIgNjkuMzUuMzYgNTMuODkuMzYgMzQuOTEuMzYgMTUuOTMgMTYuMzIuNDcgMzUuMy40N2MxMC41IDAgMTcuOTggNC4xMiAyMy42IDkuNDlsLTYuNjQgNi42NGMtNC4wMy0zLjc4LTkuNDktNi43Mi0xNi45Ny02LjcyLTEzLjg2IDAtMjQuNyAxMS4xNy0yNC43IDI1LjAzIDAgMTMuODYgMTAuODQgMjUuMDMgMjQuNyAyNS4wMyA4Ljk5IDAgMTQuMTEtMy42MSAxNy4zOS02Ljg5IDIuNjYtMi42NiA0LjQxLTYuNDYgNS4xLTExLjY1bC0yMi40OS4wMXoiLz48L3N2Zz4=);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100%;
+  background: var(--logo-color);
+}
+
+#logo-default,
+.dont-show-doodle #logo-non-white {
+  display: block;
+}
+#logo-non-white,
+.dont-show-doodle #logo-default {
+  display: none;
+}
+
+#logo-doodle-container {
+  /* An image logo is allowed to spill into the margin below, so it's not a
+   * real bottom margin. If the image extends further than that margin, it
+   * is cropped. */
+  margin: 0 auto;
+  max-height: calc(var(--logo-height) + var(--logo-margin-bottom));
+  overflow: hidden;
+  position: relative;
+  text-align: text-center;
+}
+
+.dont-show-doodle #logo-doodle-container,
+.dont-show-doodle #logo-doodle-iframe {
+  display: none;
+}
+
+#logo-doodle-iframe {
+  border: 0;
+  height: var(--logo-iframe-height);
+  margin: 0 auto calc(var(--logo-height) + var(--logo-margin-bottom)
+                      - var(--logo-iframe-initial-height)) auto;
+  transition: width var(--logo-iframe-resize-duration),
+              height var(--logo-iframe-resize-duration);
+  width: var(--logo-iframe-width);
+}
+
+#ddlsb {
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-block;
+  height: 26px;
+  opacity: .8;
+  position: absolute;
+  width: 26px;
+}
+
+#ddlsb:hover {
+  opacity: 1;
+}
+
+#ddlsb-img {
+  height: 22px;
+  left: 2px;
+  position: absolute;
+  top: 2px;
+  width: 22px;
+}
+
+#ddlsd {
+  background: #fff;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, .2);
+  left: 0;
+  margin: auto;
+  min-height: 100px;
+  padding: 22px;
+  position: absolute;
+  right: 0;
+  text-align: start;
+  top: 30%;
+  width: 300px;
+  z-index: 9001;
+}
+
+#ddlsd::backdrop {
+  background-color: rgba(255, 255, 255, .9);
+}
+
+@media (prefers-color-scheme: dark) {
+  #ddlsd {
+    background-color: rgb(var(--dark-mode-dialog-rgb));
+    box-shadow: var(--dark-mode-shadow);
+  }
+
+  #ddlsd::backdrop {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+}
+
+#ddlsd button {
+  border: none;
+  cursor: pointer;
+}
+
+#ddlsd button:hover {
+  opacity: .8;
+}
+
+#ddlsd-title {
+  color: #212121;
+  font-size: 22px;
+  padding-bottom: 16px;
+  padding-inline-end: 40px;
+}
+
+@media (prefers-color-scheme: dark) {
+  #ddlsd-title {
+    color: rgb(var(--GG200-rgb));
+  }
+}
+
+#ddlsd-close {
+  height: 24px;
+  position: absolute;
+  right: 22px;
+  top: 22px;
+  width: 24px;
+}
+
+[dir=rtl] #ddlsd-close {
+  left: 22px;
+  right: auto;
+}
+
+#ddlsd-close::before {
+  -webkit-mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgZmlsbD0iIzVGNjM2OCI+PHBhdGggZD0iTTE5IDYuNDFMMTcuNTkgNSAxMiAxMC41OSA2LjQxIDUgNSA2LjQxIDEwLjU5IDEyIDUgMTcuNTkgNi40MSAxOSAxMiAxMy40MSAxNy41OSAxOSAxOSAxNy41OSAxMy40MSAxMnoiLz48L3N2Zz4=);
+  -webkit-mask-position: center center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 32px;
+  background-color: #4d4d4d;
+  content: '';
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+  #ddlsd-close::before {
+    background-color: rgb(var(--GG500-rgb));
+  }
+}
+
+#ddlsd-fbb {
+  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCI+PHBhdGggZD0iTTQzLjUgNDhoLTM5QzIgNDggMCA0NiAwIDQzLjV2LTM5QzAgMiAyIDAgNC41IDBoMzlDNDYgMCA0OCAyIDQ4IDQuNXYzOWMwIDIuNS0yIDQuNS00LjUgNC41eiIgZmlsbD0iIzNhNTg5YiIvPjxwYXRoIGQ9Ik0zOS40IDI5LjRsLjktNy4zaC03LjJ2LTQuN2MwLTIuMS42LTMuNSAzLjYtMy41aDMuOFY3LjVjLS43LS4xLTIuOS0uMy01LjYtLjMtNS41IDAtOS4zIDMuNC05LjMgOS42djUuM2gtNi4ydjcuM2g2LjJWNDhoNy41VjI5LjRoNi4zeiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==) no-repeat center;
+}
+
+#ddlsd-twb {
+  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCI+PHBhdGggZD0iTTQzLjUgNDhoLTM5QzIgNDggMCA0NiAwIDQzLjV2LTM5QzAgMiAyIDAgNC41IDBoMzlDNDYgMCA0OCAyIDQ4IDQuNXYzOWMwIDIuNS0yIDQuNS00LjUgNC41eiIgZmlsbD0iIzNhYWFlMSIvPjxwYXRoIGQ9Ik0zOS4zIDE1LjVjLTEuMS41LTIuMy44LTMuNS45IDEuMi0uNyAyLjItMS45IDIuNi0zLjMtMS4xLjctMi41IDEuMi0zLjggMS41LTEuMS0xLjEtMi42LTEuOS00LjQtMS45LTMuMyAwLTYgMi43LTYgNiAwIC41LjEuOS4xIDEuMy00LjktLjMtOS40LTIuNi0xMi40LTYuMy0uNS45LS44IDEuOS0uOCAzIDAgMiAxLjEgMy45IDIuNyA1LTEgMC0xLjktLjMtMi43LS44di4xYzAgMi45IDIgNS4zIDQuOCA1LjktLjUuMS0xLjEuMi0xLjYuMi0uNCAwLS44LS4xLTEuMS0uMS44IDIuNCAzIDQuMSA1LjYgNC4yLTIgMS42LTQuNyAyLjUtNy40IDIuNS0uNSAwLTEgMC0xLjQtLjEgMi43IDEuNyA1LjggMi43IDkuMiAyLjcgMTEgMCAxNy05LjEgMTctMTd2LS44YzEuMy0uOCAyLjMtMS44IDMuMS0zeiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==) no-repeat center;
+}
+
+#ddlsd-emb {
+  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCI+PHBhdGggZD0iTTQzLjUgNDhoLTM5QzIgNDggMCA0NiAwIDQzLjV2LTM5QzAgMiAyIDAgNC41IDBoMzlDNDYgMCA0OCAyIDQ4IDQuNXYzOWMwIDIuNS0yIDQuNS00LjUgNC41eiIgZmlsbD0iIzlkYTZhYSIvPjxwYXRoIGQ9Ik0zNS45IDEyLjhIMTIuMWMtMi4yIDAtNCAxLjgtNCA0djE0LjRjMCAyLjIgMS44IDQgNCA0aDIzLjhjMi4yIDAgNC0xLjggNC00VjE2LjhjMC0yLjItMS44LTQtNC00eiIgZmlsbD0iI2ZmZiIvPjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzlkYTZhYSIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgZD0iTTM1LjQgMTcuMkwyNCAyNi4xbC0xMS40LTguOSIvPjwvc3ZnPg==) no-repeat center;
+}
+
+#ddlsd-text {
+  border: 2px solid #aaa;
+  border-color: rgba(0, 0, 0, .15);
+  border-radius: 4px;
+  color: #555;
+  display: inline-block;
+  font-size: 14px;
+  padding: 12px;
+  width: 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+  #ddlsd-text {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: rgb(var(--GG200-rgb));
+  }
+}
+
+#ddlsd-copy {
+  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCI+PHBhdGggZD0iTTM1LjI1IDE0YS43Ni43NiAwIDAgMSAuNzUuNzV2MjUuNWEuNzYuNzYgMCAwIDEtLjc1Ljc1aC0xNi41YS43Ni43NiAwIDAgMS0uNzUtLjc1di0yNS41YS43Ni43NiAwIDAgMSAuNzUtLjc1aDE2LjVtMC00aC0xNi41QTQuNzcgNC43NyAwIDAgMCAxNCAxNC43NXYyNS41QTQuNzcgNC43NyAwIDAgMCAxOC43NSA0NWgxNi41QTQuNzcgNC43NyAwIDAgMCA0MCA0MC4yNXYtMjUuNUE0Ljc3IDQuNzcgMCAwIDAgMzUuMjUgMTB6IiBmaWxsPSIjNjY2Ii8+PHBhdGggZD0iTTkgMzhWOS43NUE0Ljc3IDQuNzcgMCAwIDEgMTMuNzUgNWgxOS4xNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjY2IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS13aWR0aD0iNCIvPjwvc3ZnPg==) no-repeat center;
+  background-size: contain;
+  display: inline-block;
+  height: 36px;
+  margin: 5px;
+  width: 36px;
+}
+
+.ddlsd-sbtn {
+  background-size: contain;
+  border-radius: 4px;
+  display: inline-block;
+  height: 48px;
+  margin: 0 4px;
+  width: 48px;
+}
+
+#ddlsd-hr {
+  background: #ccc;
+  border: 0;
+  height: 2px;
+  margin: 15px 0;
+}
+
+#ddlsd-link {
+  display: flex;
+  margin: 6px;
+}
+
+#ddlsd-text-ctr {
+  display: block;
+  overflow: hidden;
+  padding-inline-end: 36px;
+}
+
+
+
+
+/* Copyright 2015 The Chromium Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file. */
+
+ html {
+  /* Material Design constants */
+  --md-edit-menu-size: 20px;
+  --md-fallback-letter-size: 16px;
+  --md-favicon-size: 32px;
+  --md-icon-margin-bottom: 16px;
+  --md-icon-size: 48px;
+  --md-max-tiles-row: 5;
+  --md-menu-margin-side: 2px;
+  --md-menu-margin-top: 4px;
+  --md-menu-size: 12px;
+  --md-tile-margin: 16px;
+  --md-tile-padding-top: 16px;
+  --md-tile-size: 112px;
+  --md-title-font-size: 12px;
+  --md-title-height: 24px;
+  --md-title-max-height: 28px;
+
+  /* May be overridden by themes (on the body element). */
+  --icon-background-color: rgb(var(--GG100-rgb));
+  --tile-title-color: rgb(var(--GG800-rgb));
+}
+
+body {
+  color: var(--tile-title-color);
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  user-select: none;
+}
+
+a {
+  display: block;
+}
+
+a,
+a:active,
+a:hover,
+a:visited {
+  text-decoration: none;
+}
+
+#most-visited {
+  margin-top: 10px;
+  text-align: -webkit-center;
+  user-select: none;
+  width: 100%;
+}
+
+#mv-tiles,
+.mv-tiles-old {
+  font-size: 0;
+  /* opacity: 0; */
+  position: relative;
+  /* transition: opacity 300ms; */
+  user-select: none;
+}
+
+.mv-tiles-old {
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+}
+
+.mouse-navigation {
+  outline: none;
+}
+
+.grid-tile-container {
+  position: absolute;
+  transition: transform 300ms ease-in-out;
+}
+
+.grid-tile {
+  transition: transform 300ms ease-in-out;
+}
+
+/* Prevent transitions on the held tile in order for it to smoothly follow the
+ * mouse. */
+.reorder .grid-tile {
+  transition-duration: 0s;
+}
+
+.reorder {
+  z-index: 10;  /* Ensure the held tile is visible. */
+}
+
+.md-tile {
+  border-radius: 4px;
+  box-sizing: border-box;
+  color: rgb(var(--tile-title-color));
+  cursor: pointer;
+  height: var(--md-tile-size);
+  margin-bottom: var(--md-tile-margin);
+  opacity: 1;
+  padding-top: var(--md-tile-padding-top);
+  position: relative;
+  transition-property:
+      background, background-color, border-color, box-shadow, opacity, filter;
+  width: var(--md-tile-size);
+}
+
+.md-empty-tile {
+  display: none;
+}
+
+body:not(.reordering) .md-tile:hover,
+.reorder .md-tile {
+  background-color: rgba(var(--GG900-rgb), .06);
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not(.reordering) .md-tile:hover,
+  .reorder .md-tile {
+    background-color: rgba(255, 255, 255, .1);
+  }
+}
+
+body.dark-theme:not(.reordering) .md-tile:hover,
+body.dark-theme .reorder .md-tile {
+  background-color: rgba(255, 255, 255, .1);
+}
+
+body:not(.reordering) .md-tile:hover .md-menu {
+  opacity: 1;
+  transition-delay: 500ms;
+}
+
+body.dark-theme:not(.reordering) .md-tile:active + .md-menu::after {
+  background-color: rgb(var(--GG400-rgb));
+  transition-delay: 0ms;
+}
+
+.blacklisted {
+  margin: 0;
+  padding: 0;
+  transform: scale(0, 0);
+  transition-duration: 200ms;
+  transition-property: transform, box-shadow, margin, opacity, padding, width;
+  width: 0;
+}
+
+.md-tile-inner {
+  align-items: center;
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+  position: relative;
+  width: 100%;
+  z-index: -1;
+}
+
+.md-icon {
+  align-items: center;
+  background-color: var(--icon-background-color);
+  border-radius: 50%;
+  display: flex;
+  height: var(--md-icon-size);
+  justify-content: center;
+  margin-bottom: var(--md-icon-margin-bottom);
+  width: var(--md-icon-size);
+  overflow: hidden;
+}
+
+.md-add-icon {
+  background-image: url(chrome-search://most-visited/add_link.svg);
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.use-white-add-icon .md-add-icon {
+  background-image: url(chrome-search://most-visited/add_link_white.svg);
+}
+
+.md-fallback-letter {
+  background-color: rgb(var(--GG600-rgb));
+  border-radius: 50%;
+  color: white;
+  font-size: var(--md-fallback-letter-size);
+  height: var(--md-favicon-size);
+  line-height: var(--md-favicon-size);
+  text-align: center;
+  width: var(--md-favicon-size);
+}
+
+.win .md-fallback-letter {
+  font-weight: 600;
+}
+
+.md-title {
+  font-size: var(--md-title-font-size);
+  font-weight: 500;
+  max-height: var(--md-title-max-height);
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 88px;
+}
+
+.md-title span {
+  line-height: var(--md-title-height);
+}
+
+/* Font weight on Mac and ChromeOS looks heavier on default background and
+ * needs to be reduced. */
+body.mac-chromeos .md-title {
+  font-weight: 400;
+}
+
+/* Apply when a custom background is set. */
+body.custom-background .md-title {
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, .35));
+}
+
+/* Apply only when a theme with image is installed. */
+body.use-title-container .md-title {
+  background-color: white;
+  /* Necessary for a "pill" shape. Using 50% creates an oval. */
+  border-radius: 500px;
+  color: rgb(var(--GG800-rgb));
+  filter: unset;
+  padding: 0 8px;
+}
+
+.md-menu {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  height: var(--md-menu-size);
+  margin: var(--md-menu-margin-top) var(--md-menu-margin-side);
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: var(--md-menu-size);
+}
+
+html[dir=rtl] .md-menu {
+  left: 0;
+  right: auto;
+}
+
+body:not(.reordering) .md-menu:active,
+body:not(.reordering) .md-menu:focus:not(.mouse-navigation) {
+  opacity: 1;
+}
+
+/* We use ::after without content to provide the masked X element. */
+.md-menu::after {
+  --mask-gap: 1px;
+  --mask-width: calc(var(--md-menu-size) - 2 * var(--mask-gap));
+  /* TODO(crbug.com/1012065): Use SVG for the "X" icon. */
+  -webkit-mask-image: -webkit-image-set(
+      url(chrome-search://most-visited/dont_show.png) 1x,
+      url(chrome-search://most-visited/dont_show_2x.png) 2x);
+  -webkit-mask-position: var(--mask-gap);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: var(--mask-width);
+  background-color: rgb(var(--GG600-rgb));
+  content: '';
+  display: block;
+  height: var(--md-menu-size);
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: var(--md-menu-size);
+}
+
+@media (prefers-color-scheme: dark) {
+  .md-menu::after {
+    background-color: rgb(var(--GG200-rgb));
+  }
+}
+
+.md-edit-menu {
+  height: var(--md-edit-menu-size);
+  width: var(--md-edit-menu-size);
+}
+
+.md-edit-menu::after {
+  --mask-width: var(--md-edit-menu-size);
+  -webkit-mask-image: url(chrome-search://most-visited/edit_menu.svg);
+  height: var(--md-edit-menu-size);
+  width: var(--md-edit-menu-size);
+}
+
+body:not(.reordering) .md-menu:hover::after,
+body:not(.reordering) .md-menu:focus::after {
+  background-color: rgb(var(--GG700-rgb));
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not(.reordering) .md-menu:hover::after,
+  body:not(.reordering) .md-menu:focus::after {
+    background-color: rgb(var(--GG400-rgb));
+  }
+}
+
+body.dark-theme .md-tile .md-menu::after,
+body.dark-theme:not(.reordering) .md-menu:focus:not(.mouse-navigation)::after {
+  background-color: white;
+}
+
+@media (prefers-color-scheme: dark) {
+  body.dark-theme .md-tile .md-menu::after,
+  body.dark-theme:not(.reordering)
+      .md-menu:focus:not(.mouse-navigation)::after {
+    background-color: rgb(var(--GG200-rgb));
+  }
+}
+
+body.dark-theme:not(.reordering) .md-menu:active::after,
+body.dark-theme:not(.reordering) .md-menu:hover::after,
+body.dark-theme:not(.reordering) .md-menu.mouse-navigation:focus::after {
+  background-color: rgb(var(--GG300-rgb));
+}
+
+@media (prefers-color-scheme: dark) {
+  body.dark-theme:not(.reordering) .md-menu:active::after,
+  body.dark-theme:not(.reordering) .md-menu:hover::after,
+  body.dark-theme:not(.reordering) .md-menu.mouse-navigation:focus::after {
+    background-color: rgb(var(--GG400-rgb));
+  }
+}
+
