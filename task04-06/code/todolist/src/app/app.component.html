@@ -1,0 +1,19 @@
+<div class="todo">
+  <div class="title">
+    <span>Angular TodoList</span>
+  </div>
+  <div class="todo-con">
+    <input type="text" [(ngModel)]="keyword" placeholder="add todo" />
+    <button (click)="onAdd()">添加</button>
+  </div>
+  <div class="list">
+    <ul>
+      <li *ngFor="let item of list; let key = index">
+        <div class="item">
+          <span> {{ item }}</span>
+          <button (click)="onDelete(key)">删除</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
